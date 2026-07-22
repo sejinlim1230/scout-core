@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="V:Scout 기반의 재사용 가능한 업무 운영 툴 기본 뼈대">
+  <title>Scout Core</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 이동</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">V</span>
+        <div><strong id="brand-name">Scout Core</strong><small id="brand-subtitle">업무 운영 허브</small></div>
+      </div>
+      <nav id="primary-nav" aria-label="주 메뉴"></nav>
+      <div class="sidebar-foot">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="connection-label">데모 데이터</span>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menu-button" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+        <div><h1 id="page-title">오늘의 운영 현황</h1><p id="page-description">중요한 일부터 확인하고 바로 처리하세요.</p></div>
+        <div class="topbar-actions">
+          <button class="button secondary" id="refresh-button">새로고침</button>
+          <button class="button primary" data-action="add-org">+ 기관 등록</button>
+        </div>
+      </header>
+
+      <main id="main" tabindex="-1">
+        <section id="view" aria-live="polite"></section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <dialog id="org-dialog">
+    <form method="dialog" id="org-form">
+      <div class="dialog-head"><div><h2>기관 등록</h2><p>필수 정보만 먼저 입력하고 상세 정보는 이후에 보완할 수 있습니다.</p></div><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="form-grid">
+        <label>기관명 <span aria-hidden="true">*</span><input name="name" required maxlength="80"></label>
+        <label>담당자<select name="member" id="member-select"></select></label>
+        <label>단계<select name="stage" id="stage-select"></select></label>
+        <label>다음 연락일<input name="nextContact" type="date"></label>
+      </div>
+      <label>메모<textarea name="memo" rows="4" maxlength="500" placeholder="핵심 맥락과 다음 행동을 적어주세요."></textarea></label>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" value="default" id="save-org-button">저장</button></div>
+    </form>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
