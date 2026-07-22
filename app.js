@@ -121,11 +121,19 @@
     $("#org-dialog").showModal();
   }
 
+  function openExportDialog() {
+    const filtered = document.querySelector('#export-form input[value="filtered"]');
+    filtered.disabled = !state.query;
+    if (!state.query && filtered.checked) document.querySelector('#export-form input[value="all"]').checked = true;
+    $("#export-dialog").showModal();
+  }
+
   document.addEventListener("click", async event => {
     const routeButton = event.target.closest("[data-route]");
     if (routeButton) { setRoute(routeButton.dataset.route); return; }
     const action = event.target.closest("[data-action]")?.dataset.action;
     if (action === "add-org") openOrgDialog();
+    if (action === "export-excel") openExportDialog();
     if (action === "retry") load();
   });
   document.addEventListener("change", async event => {
@@ -148,6 +156,21 @@
       $("#org-dialog").close(); await load(); setRoute("orgs"); toast("기관을 등록했습니다.", "success");
     } catch (error) { toast(error.message || "저장하지 못했습니다.", "error"); }
     finally { button.disabled = false; button.textContent = "저장"; }
+  });
+  $("#export-form").addEventListener("submit", event => {
+    if (event.submitter?.value === "cancel") return;
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const scope = form.get("scope") || "all";
+    const sheets = form.getAll("sheet");
+    const query = state.query.toLocaleLowerCase(config.locale);
+    const orgs = scope === "filtered" ? state.orgs.filter(org => [org.name, org.member, org.memo].some(value => String(value || "").toLocaleLowerCase(config.locale).includes(query))) : state.orgs;
+    const orgIds = new Set(orgs.map(org => org.id));
+    const actions = scope === "filtered" ? state.actions.filter(action => orgIds.has(action.orgId)) : state.actions;
+    const button = $("#download-excel-button"); button.disabled = true; button.textContent = "파일 생성 중…";
+    try { const filename = window.ScoutExport.download({ orgs, actions, config, scope, sheets }); $("#export-dialog").close(); toast(`${filename} 다운로드를 시작했습니다.`, "success"); }
+    catch (error) { toast(error.message || "엑셀 파일을 만들지 못했습니다.", "error"); }
+    finally { button.disabled = false; button.textContent = ".xlsx 다운로드"; }
   });
   $("#refresh-button").addEventListener("click", () => load());
   $("#menu-button").addEventListener("click", event => { const open = document.body.classList.toggle("nav-open"); event.currentTarget.setAttribute("aria-expanded", String(open)); });

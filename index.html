@@ -6,6 +6,7 @@
   <meta name="description" content="V:Scout 기반의 재사용 가능한 업무 운영 툴 기본 뼈대">
   <title>Scout Core</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="export.css">
 </head>
 <body>
   <a class="skip-link" href="#main">본문으로 이동</a>
@@ -27,6 +28,7 @@
         <button class="icon-button menu-button" id="menu-button" aria-label="메뉴 열기" aria-expanded="false">☰</button>
         <div><h1 id="page-title">오늘의 운영 현황</h1><p id="page-description">중요한 일부터 확인하고 바로 처리하세요.</p></div>
         <div class="topbar-actions">
+          <button class="button secondary" data-action="export-excel">엑셀 내보내기</button>
           <button class="button secondary" id="refresh-button">새로고침</button>
           <button class="button primary" data-action="add-org">+ 기관 등록</button>
         </div>
@@ -39,6 +41,22 @@
   </div>
 
   <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <dialog id="export-dialog">
+    <form method="dialog" id="export-form">
+      <div class="dialog-head"><div><h2>엑셀 내보내기</h2><p>필요한 범위와 시트를 선택해 다운로드합니다.</p></div><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <fieldset><legend>데이터 범위</legend>
+        <label class="option-row"><input type="radio" name="scope" value="all" checked><span><strong>전체 데이터</strong><small>현재 저장된 모든 기관과 액션</small></span></label>
+        <label class="option-row"><input type="radio" name="scope" value="filtered"><span><strong>현재 검색 결과</strong><small>기관 화면의 검색 조건을 적용</small></span></label>
+      </fieldset>
+      <fieldset><legend>포함할 시트</legend>
+        <label class="check-row"><input type="checkbox" name="sheet" value="summary" checked> 요약</label>
+        <label class="check-row"><input type="checkbox" name="sheet" value="orgs" checked> 기관 목록</label>
+        <label class="check-row"><input type="checkbox" name="sheet" value="actions" checked> 후속 액션</label>
+      </fieldset>
+      <p class="privacy-note">운영 환경에서는 관리자 권한과 다운로드 감사 로그를 적용하세요.</p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" value="default" id="download-excel-button">.xlsx 다운로드</button></div>
+    </form>
+  </dialog>
   <dialog id="org-dialog">
     <form method="dialog" id="org-form">
       <div class="dialog-head"><div><h2>기관 등록</h2><p>필수 정보만 먼저 입력하고 상세 정보는 이후에 보완할 수 있습니다.</p></div><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
@@ -55,6 +73,8 @@
 
   <script src="config.js"></script>
   <script src="data.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="export.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
